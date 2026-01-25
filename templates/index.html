@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Klaviyo Profile Checker</title>
+</head>
+<body>
+    <h1>Klaviyo Profile Subscription Status</h1>
+
+    <form method="post" action="/check-profile">
+        <label for="store">Select Store:</label>
+        <select name="store" id="store">
+            {% for s in stores %}
+            <option value="{{ s }}" {% if s == store %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" value="{{ email if email else '' }}" required>
+        <br><br>
+
+        <button type="submit">Check Profile</button>
+    </form>
+
+    {% if status %}
+        <h3>Subscription Status:</h3>
+        <ul>
+            {% if status.error %}
+                <li>{{ status.error }}</li>
+            {% elif status.status %}
+                <li>{{ email }}: {{ status.status }}</li>
+            {% else %}
+                {% for channel, state in status.items() %}
+                    <li>{{ channel | capitalize }}: {{ state }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    {% endif %}
+</body>
+</html>
