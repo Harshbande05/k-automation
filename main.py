@@ -6,15 +6,11 @@ import json
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Load store API keys
 with open("stores.json") as f:
     STORE_KEYS = json.load(f)
 
+
 def get_profile_status(store_api_key: str, email: str) -> dict:
-    """
-    Returns a dictionary with subscription status per channel for a single profile.
-    If email does not exist, returns {"status": "USER DOES NOT EXIST"}
-    """
     url = "https://a.klaviyo.com/api/profiles"
     headers = {
         "Authorization": f"Klaviyo-API-Key {store_api_key}",
@@ -34,35 +30,36 @@ def get_profile_status(store_api_key: str, email: str) -> dict:
 
     data = response.json().get("data", [])
 
+    # Email does not exist in store
     if not data:
         return {"status": "USER DOES NOT EXIST"}
 
     profile = data[0]
-    subscriptions = profile["attributes"].get("subscriptions", {})
+    subscriptions = profile["attributes"]["subscriptions"]
+
+    email_marketing = subscriptions["email"]["marketing"]
+    sms_marketing = subscriptions["sms"]["marketing"]
+    sms_transactional = subscriptions["sms"]["transactional"]
+
     result = {}
 
-    # Loop through all channels
-    for channel, channel_data in subscriptions.items():
-        marketing = channel_data.get("marketing")
-        if not marketing:
-            continue
+    # Suppression logic
+    if email_marketing.get("suppression"):
+        result["profile_status"] = email_marketing["suppression"][0].get(
+            "reason", "USER_SUPPRESSED"
+        )
+    else:
+        result["profile_status"] = "USER_ACTIVE"
 
-        # Determine subscription status
-        if marketing.get("suppression") or marketing.get("list_suppressions"):
-            result[channel] = "SUPPRESSED"
-        elif marketing.get("can_receive_email_marketing") or \
-             marketing.get("can_receive_sms_marketing") or \
-             marketing.get("can_receive_push_marketing") or \
-             marketing.get("can_receive"):
-            result[channel] = "SUBSCRIBED"
-        elif marketing.get("consent") == "UNSUBSCRIBED":
-            result[channel] = "UNSUBSCRIBED"
-        else:
-            result[channel] = "NEVER SUBSCRIBED"
+    # Channel-level consent states
+    result["email_marketing"] = email_marketing.get("consent", "UNKNOWN")
+    result["sms_marketing"] = sms_marketing.get("consent", "UNKNOWN")
+    result["sms_transactional"] = sms_transactional.get("consent", "UNKNOWN")
 
     return result
 
-# --- Routes ---
+
+# ---------- ROUTES ----------
 
 @app.get("/")
 def dashboard(request: Request):
@@ -71,9 +68,15 @@ def dashboard(request: Request):
         {"request": request, "stores": list(STORE_KEYS.keys())}
     )
 
+
 @app.post("/check-profile")
-def check_profile(request: Request, email: str = Form(...), store: str = Form(...)):
+def check_profile(
+    request: Request,
+    email: str = Form(...),
+    store: str = Form(...)
+):
     api_key = STORE_KEYS.get(store)
+
     if not api_key:
         status = {"error": "Invalid store selected"}
     else:
