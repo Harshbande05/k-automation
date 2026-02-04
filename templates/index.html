@@ -1,58 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Klaviyo Profile Checker</title>
+  <meta charset="UTF-8" />
+  <title>Klaviyo Profile Checker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(1200px 600px at 10% 10%, #1b2b4f 0%, #060b1a 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e5e7eb;
+    }
+
+    .card {
+      width: 720px;
+      max-width: 92%;
+      padding: 40px 48px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(20,30,60,.95), rgba(8,12,28,.95));
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 6px;
+    }
+
+    .logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.6));
+    }
+
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+      text-align: center;
+      opacity: 0.8;
+      margin-bottom: 32px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      text-align: right;
+      opacity: 0.9;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #2a355a;
+      background: #0b1226;
+      color: #e5e7eb;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #8b93b3;
+    }
+
+    .btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(90deg, #5b7cfa, #8b5cf6);
+      transition: transform .08s ease, box-shadow .08s ease;
+      box-shadow: 0 10px 24px rgba(91,124,250,.35);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 32px rgba(91,124,250,.45);
+    }
+
+    .result {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      font-size: 14px;
+    }
+
+    th {
+      opacity: 0.85;
+      font-weight: 600;
+    }
+
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .footer-link {
+    color: #8b5cf6;
+    text-decoration: none;
+    font-weight: 600;
+    }
+
+    .footer-link:hover {
+    text-decoration: underline;
+    }
+
+    .error {
+      color: #ff7b7b;
+      text-align: center;
+      margin-top: 16px;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>Klaviyo Profile Subscription Status</h1>
+  <div class="card">
+
+    <!-- Header with Logo -->
+    <div class="header">
+      <img src="/static/mattel.png" alt="Mattel" class="logo" />
+      <h1>Mattel user consent status - Klaviyo</h1>
+    </div>
+
+    <div class="subtitle">Check email/SMS subscription status.</div>
 
     <form method="post" action="/check-profile">
-        <label for="store">Select Store:</label>
-        <select name="store" id="store" required>
-            <option value="">-- Select Store --</option>
-            {% for s in stores %}
-                <option value="{{ s }}" {% if store and s == store %}selected{% endif %}>
-                    {{ s }}
-                </option>
-            {% endfor %}
+      <div class="form-row">
+        <label>Customer Email</label>
+        <input 
+          type="email" 
+          name="email" 
+          placeholder="user@example.com" 
+          required 
+          value="{{ email or '' }}"
+        />
+      </div>
+
+      <div class="form-row">
+        <label>Store</label>
+        <select name="store" required>
+          <option value="">Select a store</option>
+          {% for store_name in stores %}
+            <option value="{{ store_name }}" {% if store == store_name %}selected{% endif %}>
+              {{ store_name }}
+            </option>
+          {% endfor %}
         </select>
+      </div>
 
-        <br><br>
-
-        <label for="email">Email:</label>
-        <input
-            type="email"
-            name="email"
-            id="email"
-            {% if email %}value="{{ email }}"{% endif %}
-            required
-        >
-
-        <br><br>
-
-        <button type="submit">Check Profile</button>
+      <button class="btn" type="submit">Check Status</button>
     </form>
 
     {% if status %}
-        <h3>Subscription Status:</h3>
-
-        <ul>
-            {% if status.error %}
-                <li>{{ status.error }}</li>
-
-            {% elif status.status %}
-                <li><strong>{{ email }}</strong>: {{ status.status }}</li>
-
-            {% else %}
-                <li><strong>Profile Status:</strong> {{ status.profile_status }}</li>
-                <li>Email Marketing: {{ status.email_marketing }}</li>
-                <li>SMS Marketing: {{ status.sms_marketing }}</li>
-                <li>SMS Transactional: {{ status.sms_transactional }}</li>
-            {% endif %}
-        </ul>
+      <div class="result">
+        {% if status.error %}
+          <div class="error">{{ status.error }}</div>
+        {% else %}
+          <table>
+            <tr>
+              <th>Profile Status</th>
+              <th>Email Marketing</th>
+              <th>SMS Marketing</th>
+              <th>SMS Transactional</th>
+            </tr>
+            <tr>
+              <td>{{ status.profile_status }}</td>
+              <td>{{ status.email_marketing }}</td>
+              <td>{{ status.sms_marketing }}</td>
+              <td>{{ status.sms_transactional }}</td>
+            </tr>
+          </table>
+        {% endif %}
+      </div>
     {% endif %}
+
+    <div class="footer">
+        For further assistance, 
+        <a href="https://your-gto-link-here" target="_blank" class="footer-link">
+            raise a GTO ticket
+        </a> 
+        and assign it to the <b>ms_marketingintegration</b> group.
+    </div>
+
+  </div>
 
 </body>
 </html>
