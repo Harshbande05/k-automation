@@ -30,7 +30,6 @@ def get_profile_status(store_api_key: str, email: str) -> dict:
 
     data = response.json().get("data", [])
 
-    # Email does not exist in store
     if not data:
         return {"status": "USER DOES NOT EXIST"}
 
@@ -43,7 +42,6 @@ def get_profile_status(store_api_key: str, email: str) -> dict:
 
     result = {}
 
-    # Suppression logic
     if email_marketing.get("suppression"):
         result["profile_status"] = email_marketing["suppression"][0].get(
             "reason", "USER_SUPPRESSED"
@@ -51,7 +49,6 @@ def get_profile_status(store_api_key: str, email: str) -> dict:
     else:
         result["profile_status"] = "USER_ACTIVE"
 
-    # Channel-level consent states
     result["email_marketing"] = email_marketing.get("consent", "UNKNOWN")
     result["sms_marketing"] = sms_marketing.get("consent", "UNKNOWN")
     result["sms_transactional"] = sms_transactional.get("consent", "UNKNOWN")
@@ -63,6 +60,15 @@ def get_profile_status(store_api_key: str, email: str) -> dict:
 
 @app.get("/")
 def dashboard(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request, "stores": list(STORE_KEYS.keys())}
+    )
+
+
+@app.get("/check-profile")
+def check_profile_page(request: Request):
+    # Clean page on refresh
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "stores": list(STORE_KEYS.keys())}
