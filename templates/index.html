@@ -14,11 +14,18 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(1200px 600px at 10% 10%, #1b2b4f 0%, #060b1a 60%);
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      color: #111827;
+    }
+
+    .page-container {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #e5e7eb;
+      padding: 40px 16px;
     }
 
     .card {
@@ -26,8 +33,9 @@
       max-width: 92%;
       padding: 40px 48px;
       border-radius: 16px;
-      background: linear-gradient(180deg, rgba(20,30,60,.95), rgba(8,12,28,.95));
-      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      border: 1px solid #e5e7eb;
     }
 
     .header {
@@ -35,27 +43,19 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      margin-bottom: 6px;
+      margin-bottom: 24px;
     }
 
     .logo {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.6));
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
     }
-
 
     h1 {
       margin: 0;
-      font-size: 32px;
-      letter-spacing: 0.3px;
-    }
-
-    .subtitle {
-      text-align: center;
-      opacity: 0.8;
-      margin-bottom: 32px;
+      font-size: 30px;
+      color: #111827;
     }
 
     .form-row {
@@ -68,22 +68,24 @@
 
     label {
       text-align: right;
-      opacity: 0.9;
+      color: #374151;
+      font-weight: 500;
     }
 
     input, select {
       width: 100%;
       padding: 12px 14px;
       border-radius: 10px;
-      border: 1px solid #2a355a;
-      background: #0b1226;
-      color: #e5e7eb;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
       font-size: 15px;
       outline: none;
     }
 
-    input::placeholder {
-      color: #8b93b3;
+    input:focus, select:focus {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 2px rgba(239,68,68,0.15);
     }
 
     .btn {
@@ -96,135 +98,162 @@
       font-size: 16px;
       font-weight: 600;
       color: white;
-      background: linear-gradient(90deg, #5b7cfa, #8b5cf6);
-      transition: transform .08s ease, box-shadow .08s ease;
-      box-shadow: 0 10px 24px rgba(91,124,250,.35);
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 14px 32px rgba(91,124,250,.45);
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+      box-shadow: 0 8px 20px rgba(239,68,68,.35);
     }
 
     .result {
-      margin-top: 32px;
+      margin-top: 40px;
       padding-top: 20px;
-      border-top: 1px solid rgba(255,255,255,.08);
+      border-top: 1px solid #e5e7eb;
+      margin-bottom: 30px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 12px;
+      margin-top: 16px;
+      background: #ffffff;
+      border: 2px solid #ef4444;
+      border-radius: 12px;
+      overflow: hidden;
     }
 
     th, td {
       padding: 12px 10px;
       text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid #f1f5f9;
       font-size: 14px;
+      color: #111827;
     }
 
     th {
-      opacity: 0.85;
+      background: #fef2f2;
       font-weight: 600;
+      color: #b91c1c;
     }
 
     .footer {
-      margin-top: 22px;
+      margin-top: 30px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e7eb;
       text-align: center;
       font-size: 13px;
-      opacity: 0.7;
+      color: #374151;
     }
 
     .footer-link {
-    color: #8b5cf6;
-    text-decoration: none;
-    font-weight: 600;
+      color: #dc2626;
+      text-decoration: none;
+      font-weight: 600;
     }
 
     .footer-link:hover {
-    text-decoration: underline;
+      text-decoration: underline;
     }
 
     .error {
-      color: #ff7b7b;
+      color: #dc2626;
       text-align: center;
       margin-top: 16px;
       font-weight: 600;
     }
+
+    /* 🔥 Bottom Yellow Footer */
+    .bottom-footer {
+      background: #ffffff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      border-top: 2px solid #3d6be0;
+    }
+
+    .bottom-footer img {
+      height: 24px;
+      object-fit: contain;
+    }
+
+    .header-divider {
+      margin: 24px 0 28px;
+      border-top: 1px solid #e5e7eb;
+    }
+
   </style>
 </head>
 <body>
 
-  <div class="card">
+  <div class="page-container">
+    <div class="card">
 
-    <!-- Header with Logo -->
-    <div class="header">
-      <img src="/static/mattel.png" alt="Mattel" class="logo" />
-      <h1>Mattel user consent status - Klaviyo</h1>
-    </div>
-
-    <div class="subtitle">Check email/SMS subscription status.</div>
-
-    <form method="post" action="/check-profile">
-      <div class="form-row">
-        <label>Customer Email</label>
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="user@example.com" 
-          required 
-          value="{{ email or '' }}"
-        />
+      <div class="header">
+        <img src="/static/mattel.png" alt="Mattel" class="logo" />
+        <h1>Mattel user consent status - Klaviyo</h1>
       </div>
 
-      <div class="form-row">
-        <label>Store</label>
-        <select name="store" required>
-          <option value="">Select a store</option>
-          {% for store_name in stores %}
-            <option value="{{ store_name }}" {% if store == store_name %}selected{% endif %}>
-              {{ store_name }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
+      <div class="header-divider"></div>
 
-      <button class="btn" type="submit">Check Status</button>
-    </form>
+      <form method="post" action="/check-profile">
+        <div class="form-row">
+          <label>Customer Email</label>
+          <input type="email" name="email" required value="{{ email or '' }}">
+        </div>
 
-    {% if status %}
-      <div class="result">
-        {% if status.error %}
-          <div class="error">{{ status.error }}</div>
-        {% else %}
-          <table>
-            <tr>
-              <th>Profile Status</th>
-              <th>Email Marketing</th>
-              <th>SMS Marketing</th>
-              <th>SMS Transactional</th>
-            </tr>
-            <tr>
-              <td>{{ status.profile_status }}</td>
-              <td>{{ status.email_marketing }}</td>
-              <td>{{ status.sms_marketing }}</td>
-              <td>{{ status.sms_transactional }}</td>
-            </tr>
-          </table>
-        {% endif %}
-      </div>
-    {% endif %}
+        <div class="form-row">
+          <label>Store</label>
+          <select name="store" required>
+            <option value="">Select a store</option>
+            {% for store_name in stores %}
+              <option value="{{ store_name }}" {% if store == store_name %}selected{% endif %}>
+                {{ store_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
 
-    <div class="footer">
-        For further assistance, 
-        <a href="https://your-gto-link-here" target="_blank" class="footer-link">
-            raise a GTO ticket
-        </a> 
+        <button class="btn" type="submit">Check Status</button>
+      </form>
+
+      {% if status %}
+        <div class="result">
+          {% if status.error %}
+            <div class="error">{{ status.error }}</div>
+          {% else %}
+            <table>
+              <tr>
+                <th>Profile Status</th>
+                <th>Email Marketing</th>
+                <th>SMS Marketing</th>
+                <th>SMS Transactional</th>
+              </tr>
+              <tr>
+                <td>{{ status.profile_status }}</td>
+                <td>{{ status.email_marketing }}</td>
+                <td>{{ status.sms_marketing }}</td>
+                <td>{{ status.sms_transactional }}</td>
+              </tr>
+            </table>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="footer">
+        For further assistance,
+        <a href="https://your-gto-link-here" target="_blank" class="footer-link">raise a GTO ticket</a>
         and assign it to the <b>ms_marketingintegration</b> group.
-    </div>
+      </div>
 
+    </div>
+  </div>
+
+  <!-- 🔶 Yellow Footer Bar at Bottom -->
+  <div class="bottom-footer">
+    <img src="/static/HCLTech.png" alt="HCLTech Logo">
+    <span>© 2026 Made with ❤️ by HCLTech</span>
   </div>
 
 </body>
